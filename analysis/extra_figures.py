@@ -1,7 +1,7 @@
 """Zusatzabbildungen (ergänzen Fig 2-4, ersetzen keine davon).
 
 Aufruf (aus dem Repo-Root):  python analysis/extra_figures.py
-Ausgabe:  figures/Fig5_Raincloud_Schaetzung.png  (ā: Verteilung + Differenzen mit Bootstrap-KI)
+Ausgabe:  figures/Fig5_Raincloud_Schaetzung.png  (ā: Verteilung + Differenzen mit Welch-KI)
           figures/Fig6_Heatmap_Trials.png        (alle 30 Trials, nach Aufnahmezeit)
           figures/Fig7_Phasenportraet.png         (Verzögerung über Geschwindigkeit)
           figures/Fig8_gg_Diagramm.png            (Längs-/Querbeschl. mit physikalischen Grenzen)
@@ -12,7 +12,7 @@ import sys
 import warnings
 
 import numpy as np
-from scipy.stats import gaussian_kde
+from scipy.stats import gaussian_kde, t as t_dist
 import matplotlib
 matplotlib.use("Agg")
 import matplotlib.pyplot as plt
@@ -43,9 +43,10 @@ def on_grid(r, key, grid):
 
 
 # --------------------------------------------------------------------------- Fig 5
-def fig_raincloud(df, n_boot=10000):
+def fig_raincloud(df):
     """Raincloud (Dichte + Box + Einzelwerte) und Schätzplot der Mittelwertsdifferenz
-    zu 'Vorne' mit 95-%-Bootstrap-Konfidenzintervall (Perzentil, unabhängige Gruppen)."""
+    zu 'Vorne' mit 95-%-KI nach Welch (unabhängige Gruppen). Ein Perzentil-Bootstrap
+    wäre bei n = 10 systematisch zu schmal."""
     rng = np.random.default_rng(7)
     g = {p: df.loc[df.Position == p, "mean"].to_numpy() for p in POS}
     fig, (ax, ax2) = plt.subplots(1, 2, figsize=(14, 6), gridspec_kw={"width_ratios": [1.6, 1]})
@@ -74,10 +75,12 @@ def fig_raincloud(df, n_boot=10000):
     ref = g["Vorne"]
     for j, p in enumerate(["Neutral", "Hinten"]):
         diff = g[p].mean() - ref.mean()
-        boot = np.array([rng.choice(g[p], len(g[p])).mean() - rng.choice(ref, len(ref)).mean()
-                         for _ in range(n_boot)])
-        ci = np.percentile(boot, [2.5, 97.5])
-        dens = gaussian_kde(boot)(yy2 := np.linspace(boot.min(), boot.max(), 300))
+        va, vb = g[p].var(ddof=1) / len(g[p]), ref.var(ddof=1) / len(ref)
+        se = np.sqrt(va + vb)
+        dof = (va + vb) ** 2 / (va ** 2 / (len(g[p]) - 1) + vb ** 2 / (len(ref) - 1))
+        ci = diff + np.array([-1, 1]) * t_dist.ppf(0.975, dof) * se
+        yy2 = diff + np.linspace(-4, 4, 300) * se   # Stichprobenverteilung der Differenz
+        dens = t_dist.pdf((yy2 - diff) / se, dof)
         dens = 0.35 * dens / dens.max()
         ax2.fill_betweenx(yy2, j, j + dens, color=COL[p], alpha=0.3, lw=0)
         ax2.vlines(j, *ci, color=INK, lw=2.5)
@@ -88,7 +91,7 @@ def fig_raincloud(df, n_boot=10000):
     ax2.set_xticks([0, 1], ["neutral − vorn", "hinten − vorn"])
     ax2.set_xlim(-0.9, 1.5)
     ax2.set_ylabel("Differenz ā [m/s²]")
-    ax2.set_title("Differenz zu vorn (95-%-Bootstrap-KI, unkorrigiert)", fontsize=14)
+    ax2.set_title("Differenz zu vorn (95-%-KI Welch, unkorrigiert)", fontsize=14)
     ax2.grid(axis="x", visible=False)
     fig.tight_layout()
     fig.savefig(os.path.join(OUT_FIG, "Fig5_Raincloud_Schaetzung.png"))
@@ -217,7 +220,7 @@ def fig_gg(trials):
 # --------------------------------------------------------------------------- Fig 9
 # Ausgangshaltung des Rumpfs (Grad aus der Senkrechten, + = nach vorn) ist NICHT gemessen,
 # nur schematisch; animiert wird die gemessene Neigungsänderung ab Bremsbeginn.
-START_LEAN = {"Vorne": 40.0, "Neutral": 20.0, "Hinten": -10.0}
+START_LEAN = {"Vorne": 30.0, "Neutral": 15.0, "Hinten": -15.0}   # Haltung in der Rollphase
 TRUNK, ARM = 0.60, 0.55   # m, schematische Segmentlängen
 
 
@@ -264,7 +267,7 @@ def fig_animation(trials, fps=20, slow=0.5):
     axc.set_ylabel("a$_x$ [m/s²]")
     axc.legend(loc="upper left", frameon=False, ncol=3, fontsize=11)
     fig.text(0.01, 0.01, f"Mittel aus je 10 Trials · Zeitlupe {slow:g}× · Pfeil = Verzögerung · "
-             "Ausgangshaltung schematisch, Neigungsänderung gemessen (Gyro)",
+             "Haltung in der Rollphase schematisch, Neigungsänderung Δθ ggü. Rollphase gemessen (Gyro)",
              fontsize=10, color=INK2)
     clock_txt = fig.text(0.99, 0.96, "", ha="right", fontsize=14, color=INK)
 

@@ -27,7 +27,7 @@ Diagnoseplot mit allen 30 Trials und Bremsfenster:
    - mittlere und maximale Verzögerung, Bremsdauer
    - v₀ = −∫a dt vom Bremsbeginn bis zum Stillstand (inkl. Rückschwung)
    - Bremsweg = ∫v dt bis v = 0
-   - Rumpf-Nickwinkel über das Gyro um die Querachse
+   - Rumpf-Nickwinkel über das Gyro um die Querachse, bezogen auf die Rollphase (1,0–0,6 s vor Bremsbeginn)
 7. **Statistik:**
    - MW ± SD (n = 10), Shapiro-Wilk und Levene
    - ANOVA bzw. Kruskal-Wallis, je nach Normalverteilung
@@ -44,7 +44,7 @@ Alle **30/30 Trials** wurden automatisch erkannt. Die Bremsfenster wurden zusät
 | Bremsdauer [s] | 1,40 ± 0,20 | 1,21 ± 0,10 | 1,12 ± 0,06 | ANOVA p < 0,001 ⚠ v₀-abhängig |
 | Bremsweg [m] | 4,48 ± 0,90 | 3,46 ± 0,48 | 3,65 ± 0,53 | ANOVA p = 0,004 ⚠ v₀-abhängig |
 | Anfangsgeschw. v₀ [km/h] | 23,5 ± 2,0 | 21,9 ± 1,5 | 20,4 ± 1,4 | ANOVA p = 0,001 |
-| Rumpfneigung nach vorn (max.) [°] | 15 ± 9 | 15 ± 6 | 42 ± 6 | ANOVA p < 0,001 |
+| Rumpfneigung nach vorn (max., ggü. Rollphase) [°] | 38 ± 8 | 16 ± 7 | 44 ± 5 | ANOVA p < 0,001, η² = 0,77; Tukey: vorn–neutral und neutral–hinten p < 0,001, vorn–hinten p = 0,18 (n.s.) |
 
 Post-hoc ā (Hinten nicht normalverteilt, Shapiro p = 0,010):
 - Vorne–Neutral: Mann-Whitney mit Bonferroni p = 0,063, Tukey p = 0,037, d = 1,1
@@ -61,13 +61,15 @@ Sensitivitätsanalyse: Mit ā' = v₀ / Zeit bis Stillstand bleibt die Reihenfol
 | Konsistenz | ā·t_B = Δv im Fenster; v₀²/(2ā) = 3,65 m vs. Bremsweg 3,86 m | – | ✅ in sich stimmig (Rest: Anfangs- und Endrampe) |
 | Rollphase | v vor der Bremsung konstant (Schwankung ≈ ±0,3 m/s, Fig. 2) | konstant, leicht abnehmend | ✅ Schwerkraftkompensation funktioniert |
 | Rückschwung | v kurz ≈ −0,7 m/s nach dem Stopp (Fig. 2) | Rumpf schwingt nach dem Stopp zurück | ✅ plausibel; deshalb wird v₀ bis zum Stillstand integriert, nicht nur im Fenster (sonst +0,3 m/s) |
-| Rumpfneigung Hinten | 42 ± 6° | aus der Rücklage über die Senkrechte nach vorn | ⚠ plausibel, aber das Handy am Bauch kann zusätzlich mit dem Weichteilgewebe kippen |
+| Rumpfneigung | vorn 38°, neutral 16°, hinten 44° (ggü. Rollphase) | Rumpf kippt beim Bremsen nach vorn, bis die Arme ihn abfangen | ⚠ plausibel. Bei **vorn** passieren ≈ 22° davon schon 0,3 s **vor** dem Bremsfenster, in der weichen Anbremsphase (a_x ≈ −0,5 m/s²). Mit Bezug auf den Bremsbeginn (alte Auswertung: 15°) war das unterschlagen. Das Handy am Bauch kann zusätzlich mit dem Weichteilgewebe (Bauchfalte beim Vorbeugen) kippen. |
+| Gyro-Lotrichtung | Fehler der Vertikalen in der Rollphase 1,5–2,3° (max. 4,8°) | Gyro-Integration über ≤ 6 s ohne nennenswerte Drift | ✅ entspricht ≤ 0,4 m/s² Einstreuung, die der Baseline-Abzug (−0,02 bis −0,15 m/s²) auffängt |
 
 ### Interpretation / Diskussionspunkte
 - **Hauptbefund:** In der **neutralen** Position ist die mittlere Verzögerung am größten (≈ +8 % gegenüber Vorne). Der Gesamttest ist signifikant (p = 0,034), der Paarvergleich Vorne–Neutral nur grenzwertig (p = 0,037–0,063, je nach Verfahren). Formulierung fürs Poster: „Tendenz, großer Effekt (d = 1,1)“, nicht „eindeutig“.
 - **Hypothese H1 nicht bestätigt:** Die Hinten-Position erreicht keine höhere ā. Nach hinten verlagert, steigt zwar die theoretische Überschlaggrenze. Da ā aber in allen Positionen bei ≈ 0,5 g und damit unter dieser Grenze liegt, begrenzt eher die Bremsdosierung des Fahrers als die Physik.
 - **Vorne:** Die Verzögerung baut sich am langsamsten auf (Fig. 3). Plausibel ist eine vorsichtigere Dosierung der Vorderradbremse, weil der KSP nahe an der Überschlaggrenze liegt (vgl. Wilson & Schmidt).
-- **Hinten:** Der Rumpf kippt beim Bremsen um ≈ 42° nach vorn. Bei ≈ 0,3 s bewegt er sich relativ zum Rad nach vorn, deshalb sinkt die gemessene Verzögerung kurz ab (Einbruch in Fig. 3). Danach fangen die Arme den Rumpf ab, und es folgt ein Spitzenwert. Über den gesamten Stopp gleicht sich das aus (gleicher Impuls).
+- **Rumpfneigung:** Vorn (38°) und hinten (44°) kippt der Rumpf ähnlich stark nach vorn (n.s.), neutral nur ≈ 16°. Vorn beginnt die Bewegung schon vor dem eigentlichen Bremsfenster, hinten erst währenddessen.
+- **Hinten:** Der Rumpf kippt beim Bremsen um ≈ 44° nach vorn. Bei ≈ 0,3 s bewegt er sich relativ zum Rad nach vorn, deshalb sinkt die gemessene Verzögerung kurz ab (Einbruch in Fig. 3). Danach fangen die Arme den Rumpf ab, und es folgt ein Spitzenwert. Über den gesamten Stopp gleicht sich das aus (gleicher Impuls).
 - **Störgrößen:**
   - (1) v₀ war nicht konstant (20–24 km/h). Bremsdauer und Bremsweg hängen stark davon ab (r = 0,76 bzw. 0,89) und sind deshalb **nicht** als Positionseffekt interpretierbar. ā korreliert kaum mit v₀ (r = −0,18).
   - (2) Die Positionen wurden **geblockt** aufgenommen (Vorne 14:51–15:05 → Neutral → Hinten 15:23–15:33). Übungs- und Ermüdungseffekte lassen sich daher nicht von der Position trennen. Das Vorne-v₀ ist am höchsten, weil diese Trials zuerst gefahren wurden.
@@ -82,11 +84,11 @@ Sensitivitätsanalyse: Mit ā' = v₀ / Zeit bis Stillstand bleibt die Reihenfol
 
 | Datei | Inhalt | Lesehilfe |
 |---|---|---|
-| `Fig5_Raincloud_Schaetzung.png` | ā je Position als Dichte, Box und Einzelwerte; dazu die Differenz zu „vorn“ mit 95-%-Bootstrap-KI (10 000 Ziehungen) | neutral − vorn = +0,44 m/s² [+0,12; +0,76]. Das KI ist **nicht** für Mehrfachvergleiche korrigiert, entspricht also Tukey (p = 0,037) und nicht Mann-Whitney mit Bonferroni (p = 0,063). |
-| `Fig6_Heatmap_Trials.png` | alle 30 a_x(t)-Verläufe, nach Uhrzeit sortiert; Strich = Ende Bremsfenster, Raute = v_Rumpf = 0 | Der Einbruch bei hinten (≈ 0,3–0,5 s) ist in praktisch allen Trials sichtbar. Farbflecken nach dem Stopp sind Rumpfschwingungen, keine Bremsung. |
+| `Fig5_Raincloud_Schaetzung.png` | ā je Position als Dichte, Box und Einzelwerte; dazu die Differenz zu „vorn“ mit 95-%-KI nach Welch (ein Perzentil-Bootstrap wäre bei n = 10 zu schmal) | neutral − vorn = +0,44 m/s² [+0,07; +0,80], hinten − vorn = +0,09 [−0,26; +0,44]. Das KI ist **nicht** für Mehrfachvergleiche korrigiert, entspricht also Tukey (p = 0,037) und nicht Mann-Whitney mit Bonferroni (p = 0,063). |
+| `Fig6_Heatmap_Trials.png` | alle 30 a_x(t)-Verläufe, nach Uhrzeit sortiert; Strich = Ende Bremsfenster, Raute = v_Rumpf = 0 | Der Einbruch bei hinten (≈ 0,3–0,5 s) ist in praktisch allen Trials sichtbar. In 26/30 Trials erreicht v_Rumpf = 0 im Mittel 0,06 s vor dem Fensterende (vorn/neutral: v ≈ −0,4 bis −0,5 m/s am Fensterende). Das Fensterende enthält also schon den Rückschwung des Rumpfs; die Sensitivitätsanalyse ā' = v₀/t_Stopp bestätigt trotzdem dieselbe Reihenfolge. Farbflecken nach dem Stopp sind Rumpfschwingungen, keine Bremsung. |
 | `Fig7_Phasenportraet.png` | Verzögerung über der Geschwindigkeit (v₀ → 0), Einzeltrials und Mittel in 1-km/h-Klassen (nur Klassen mit ≥ 5 Trials) | Die Wellen sind die Rumpfschwingung (≈ 3–4 Hz). Unter ≈ 3 km/h wird das Signal unruhig (Stillstand, Abstützen). |
-| `Fig8_gg_Diagramm.png` | Quer- gegen Längsbeschleunigung im Bremsfenster [g], mit Reifenhaftkreis (0,7–0,8 g) und Überschlaggrenze (0,55–0,65 g) | Die Trial-Mittel (ā) liegen knapp über bzw. in der Überschlaggrenze. Die Spitzen des Rumpfsignals reichen über beide Grenzen hinaus, sind also kein KSP-Wert. Die Querbeschleunigung ist ≈ 0, wie bei einer geraden Bremsung zu erwarten. |
-| `Fig9_Rumpf_Animation.gif` (+ Standbild) | Mittel je Position: Rumpfneigung und a_x, Zeitlupe 0,5× | **Die Ausgangshaltung ist schematisch** (vorn 40°, neutral 20°, hinten −10° zur Senkrechten). Gemessen ist nur die Neigungsänderung Δθ ab Bremsbeginn. Nur zur Veranschaulichung, nicht für Kennwerte verwenden. |
+| `Fig8_gg_Diagramm.png` | Quer- gegen Längsbeschleunigung im Bremsfenster [g], mit Reifenhaftkreis (0,7–0,8 g) und Überschlaggrenze (0,55–0,65 g) | Die Trial-Mittel (ā = 0,42–0,59 g) liegen knapp unterhalb bzw. am unteren Rand der Überschlaggrenze. Das Band ist für alle Positionen gleich; eine Verschiebung der Rumpfmasse ändert die Grenze nur um ≈ ±0,03 g. Anteil der Rumpf-Samples über μg: 16 % (vorn), 30 % (neutral), 26 % (hinten). Die Spitzen des Rumpfsignals reichen über beide Grenzen hinaus, sind also kein KSP-Wert. Die Querbeschleunigung ist ≈ 0, wie bei einer geraden Bremsung zu erwarten. |
+| `Fig9_Rumpf_Animation.gif` (+ Standbild) | Mittel je Position: Rumpfneigung und a_x, Zeitlupe 0,5× | **Die Haltung in der Rollphase ist schematisch** (vorn 30°, neutral 15°, hinten −15° zur Senkrechten). Gemessen ist nur die Neigungsänderung Δθ gegenüber der Rollphase. Nur zur Veranschaulichung, nicht für Kennwerte verwenden. |
 
 ## Struktur
 - `analysis/io_phyphox.py`: robustes CSV-Einlesen (Komma/Tab, Dezimalpunkt/-komma)

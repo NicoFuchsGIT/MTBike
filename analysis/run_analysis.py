@@ -35,7 +35,7 @@ METRICS = [
     ("t_to_peak", "Zeit bis Maximum", "s"),
     ("v0", "Anfangsgeschw. (∫a dt bis Stillstand)", "m/s"),
     ("dist", "Bremsweg (∫v dt)", "m"),
-    ("pitch_max", "Rumpfneigung nach vorn (max.)", "°"),
+    ("pitch_max", "Rumpfneigung nach vorn (max., ggü. Rollphase)", "°"),
 ]
 
 

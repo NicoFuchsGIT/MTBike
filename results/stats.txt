@@ -53,11 +53,11 @@ Hinweis: Positionen geblockt aufgenommen (Vorne 14:51-15:05, Neutral 15:06-15:21
     post-hoc Vorne-Hinten: Tukey p=0.0235, Cohen's d=1.13
     post-hoc Neutral-Hinten: Tukey p=0.8149, Cohen's d=-0.36
 
-== Rumpfneigung nach vorn (max.) [°] ==
-  Vorne    n=10  MW= 14.57  SD= 8.96  CV= 61.5%  Shapiro p=0.735
-  Neutral  n=10  MW= 14.50  SD= 6.11  CV= 42.1%  Shapiro p=0.344
-  Hinten   n=10  MW= 42.36  SD= 5.52  CV= 13.0%  Shapiro p=0.543
-  Levene p=0.235 | ANOVA F=52.27 p=0.0000 | Kruskal-Wallis H=19.36 p=0.0001 | eta²=0.795
-    post-hoc Vorne-Neutral: Tukey p=0.9997, Cohen's d=0.01
-    post-hoc Vorne-Hinten: Tukey p=0.0000, Cohen's d=-3.73
-    post-hoc Neutral-Hinten: Tukey p=0.0000, Cohen's d=-4.79
+== Rumpfneigung nach vorn (max., ggü. Rollphase) [°] ==
+  Vorne    n=10  MW= 38.36  SD= 8.38  CV= 21.8%  Shapiro p=0.163
+  Neutral  n=10  MW= 16.29  SD= 6.83  CV= 41.9%  Shapiro p=0.097
+  Hinten   n=10  MW= 43.96  SD= 4.75  CV= 10.8%  Shapiro p=0.321
+  Levene p=0.794 | ANOVA F=46.09 p=0.0000 | Kruskal-Wallis H=19.52 p=0.0001 | eta²=0.773
+    post-hoc Vorne-Neutral: Tukey p=0.0000, Cohen's d=2.89
+    post-hoc Vorne-Hinten: Tukey p=0.1762, Cohen's d=-0.82
+    post-hoc Neutral-Hinten: Tukey p=0.0000, Cohen's d=-4.71
