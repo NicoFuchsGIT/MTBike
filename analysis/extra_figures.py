@@ -21,7 +21,7 @@ from matplotlib.colors import LinearSegmentedColormap
 
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 from brake_pipeline import G  # noqa: E402
-from run_analysis import POS, LABEL, COL, INK, INK2, GRID, OUT_FIG, style, run_all, table  # noqa: E402
+from run_analysis import POS, LABEL, COL, INK, INK2, GRID, OUT_FIG, STOPPIE, style, run_all, table  # noqa: E402
 
 SHORT = {"Vorne": "vorn", "Neutral": "neutral", "Hinten": "hinten"}
 # Sequentielle Rampe (ein Farbton, hell -> dunkel) aus der Referenzpalette
@@ -219,7 +219,7 @@ def fig_gg(trials):
 
 # --------------------------------------------------------------------------- Fig 9
 # Ausgangshaltung des Rumpfs (Grad aus der Senkrechten, + = nach vorn) ist NICHT gemessen,
-# nur schematisch; animiert wird die gemessene Neigungsänderung ab Bremsbeginn.
+# nur schematisch; animiert wird die gemessene Neigungsänderung ggü. der Rollphase.
 START_LEAN = {"Vorne": 30.0, "Neutral": 15.0, "Hinten": -15.0}   # Haltung in der Rollphase
 TRUNK, ARM = 0.60, 0.55   # m, schematische Segmentlängen
 
@@ -227,9 +227,12 @@ TRUNK, ARM = 0.60, 0.55   # m, schematische Segmentlängen
 def fig_animation(trials, fps=20, slow=0.5):
     dt = slow / fps   # Zeitlupe: 'slow' s Realzeit pro s Video
     grid = np.arange(-0.5, 1.9, dt)
-    mean = {}
+    mean, n, t_stop = {}, {}, {}
     for p in POS:
-        tr = [x for x in trials if x["position"] == p]
+        # Stoppie-Trials ausschließen: Handy-Neigung = Rumpf + Radnicken
+        tr = [x for x in trials if x["position"] == p and x["name"] not in STOPPIE]
+        n[p] = len(tr)
+        t_stop[p] = np.median([r["t_stop"] for r in tr])
         mean[p] = (np.nanmean([on_grid(r, "a_x", grid) for r in tr], 0),
                    np.nanmean([on_grid(r, "pitch", grid) for r in tr], 0))
     fig = plt.figure(figsize=(13, 7.5))
@@ -255,18 +258,22 @@ def fig_animation(trials, fps=20, slow=0.5):
         arrows[p] = ax.annotate("", xy=(0, 0), xytext=(0, 0),
                                 arrowprops=dict(arrowstyle="-|>", color=INK, lw=2.5, mutation_scale=22))
         txt[p] = ax.text(0.15, 1.82, "", ha="center", fontsize=13, color=INK)
-        ax.set_title(LABEL[p], fontsize=15, color=INK)
+        ax.set_title(f"{LABEL[p]} (n={n[p]})", fontsize=15, color=INK)
         bike_axes.append(ax)
     axc = fig.add_subplot(gs[1, :])
     for p in POS:
         axc.plot(grid, mean[p][0], color=COL[p], lw=2.5, label=LABEL[p])
     axc.axhline(0, color=INK2, lw=0.8)
+    t_after = min(t_stop.values())
+    axc.axvspan(t_after, grid[-1], color="#f0efec", zorder=0)
+    axc.text(t_after + 0.02, -7.5, "nach Stillstand: Landung Hinterrad / Fuß absetzen\n"
+             "→ Rumpf + Rad nicht trennbar, nicht interpretieren", fontsize=10, color=INK2)
     cursor = axc.axvline(grid[0], color=INK, lw=1.5)
     axc.set_xlim(grid[0], grid[-1])
     axc.set_xlabel("Zeit relativ zum Bremsbeginn [s]")
     axc.set_ylabel("a$_x$ [m/s²]")
     axc.legend(loc="upper left", frameon=False, ncol=3, fontsize=11)
-    fig.text(0.01, 0.01, f"Mittel aus je 10 Trials · Zeitlupe {slow:g}× · Pfeil = Verzögerung · "
+    fig.text(0.01, 0.01, f"Mittel je Position{' (ohne Stoppie-Trials)' if STOPPIE else ''} · Zeitlupe {slow:g}× · Pfeil = Verzögerung · "
              "Haltung in der Rollphase schematisch, Neigungsänderung Δθ ggü. Rollphase gemessen (Gyro)",
              fontsize=10, color=INK2)
     clock_txt = fig.text(0.99, 0.96, "", ha="right", fontsize=14, color=INK)
@@ -283,7 +290,10 @@ def fig_animation(trials, fps=20, slow=0.5):
             ksp = hip + 0.3 * TRUNK * np.array([np.sin(lean), np.cos(lean)])
             arrows[p].xy = tuple(ksp + np.array([0.06 * a, 0]))   # a < 0 -> Pfeil nach hinten
             arrows[p].set_position(tuple(ksp))
-            txt[p].set_text(f"a = {a:+.1f} m/s²   Δθ = {pitch:+.0f}°")
+            after = grid[k] > t_stop[p]   # nach Stillstand: Figur blass
+            for art in (trunk, arm, head):
+                art.set_alpha(0.3 if after else 1.0)
+            txt[p].set_text(f"a = {a:+.1f} m/s²   Δθ = {pitch:+.0f}°" + ("  (Stillstand)" if after else ""))
         cursor.set_xdata([grid[k]] * 2)
         clock_txt.set_text(f"t = {grid[k]:+.2f} s")
         return []

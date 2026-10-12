@@ -27,6 +27,10 @@ LABEL = {"Vorne": "nach vorn gelehnt", "Neutral": "neutral", "Hinten": "nach hin
 # Kategoriale Farben (validierte Referenzpalette, Slots 1-3, in fester Reihenfolge)
 COL = {"Vorne": "#2a78d6", "Neutral": "#eb6834", "Hinten": "#1baf7a"}
 INK, INK2, GRID = "#0b0b0b", "#52514e", "#e4e3df"
+# Trials mit (versehentlichem) Stoppie, z. B. {"Hinten Trial 15-31-33"}. Aus den Daten allein nicht
+# eindeutig erkennbar (Handy am Bauch misst Rumpf + Rad gemeinsam) -> nur aus Protokoll/Video eintragen.
+# Wirkung: Kennzeichnung in results_trials.csv, Sensitivitätsanalyse in stats.txt, Ausschluss in Fig 9.
+STOPPIE = set()
 
 METRICS = [
     ("mean", "Mittlere Verzögerung", "m/s²"),
@@ -65,8 +69,16 @@ def run_all():
 def table(trials):
     rows = [{"Position": r["position"], "Trial": r["name"],
              **{k: r[k] for k, _, _ in METRICS},
-             "delta_v": r["dv"], "t_start": r["t_start"], "t_end": r["t_end"]} for r in trials]
+             "delta_v": r["dv"], "t_start": r["t_start"], "t_end": r["t_end"],
+             "stoppie": r["name"] in STOPPIE, "stoss_nach_g": impact_g(r)} for r in trials]
     return pd.DataFrame(rows)
+
+
+def impact_g(r):
+    """Größter vertikaler Stoß [g] von 0,3 s vor bis 1,0 s nach Fensterende (Landung
+    Hinterrad, Fuß absetzen, Zurücksetzen in den Sattel - nicht unterscheidbar)."""
+    w = (r["t"] > r["t_end"] - 0.3) & (r["t"] < r["t_end"] + 1.0)
+    return r["a_v"][w].max() / 9.81
 
 
 def fmt_p(p):
@@ -223,6 +235,12 @@ def main():
             f"vs. Bremsweg {df.dist.mean():.2f} m\n"
             f"Hinweis: Positionen geblockt aufgenommen (Vorne 14:51-15:05, Neutral 15:06-15:21, "
             f"Hinten 15:23-15:33) -> Reihenfolge-/Übungseffekt nicht trennbar\n")
+    if STOPPIE:
+        s = df[~df.stoppie]
+        grp = [s.loc[s.Position == p, "mean"] for p in POS]
+        head += (f"Sensitivität ohne Stoppie-Trials ({len(STOPPIE)}): ā " +
+                 ", ".join(f"{p} {g.mean():.2f} (n={len(g)})" for p, g in zip(POS, grp)) +
+                 f"; Kruskal-Wallis {fmt_p(stats.kruskal(*grp).pvalue)}\n")
     with open(os.path.join(OUT_RES, "stats.txt"), "w", encoding="utf-8") as f:
         f.write(head + txt + "\n")
     print(head + txt)
