@@ -1,0 +1,8 @@
+Kennwert,Vorne,Neutral,Hinten,Test
+Mittlere Verzögerung [m/s²],5.01 ± 0.41,5.44 ± 0.37,5.10 ± 0.34,"Kruskal-Wallis H=6.77, p=0.034, η²=0.22"
+Maximale Verzögerung [m/s²],8.86 ± 0.82,9.55 ± 0.72,9.84 ± 1.33,"ANOVA F(2,27)=2.59, p=0.094, η²=0.16"
+Bremsdauer [s],1.40 ± 0.20,1.21 ± 0.10,1.12 ± 0.06,"ANOVA F(2,27)=11.72, p<0.001, η²=0.46"
+Zeit bis Maximum [s],0.64 ± 0.24,0.49 ± 0.30,0.60 ± 0.12,"Kruskal-Wallis H=2.66, p=0.265, η²=0.08"
+Anfangsgeschw. (aus ∫a dt) [m/s],6.94 ± 0.48,6.59 ± 0.32,5.72 ± 0.43,"ANOVA F(2,27)=23.21, p<0.001, η²=0.63"
+Bremsweg (aus ∫∫a dt) [m],4.99 ± 0.90,4.01 ± 0.40,3.60 ± 0.50,"ANOVA F(2,27)=12.55, p<0.001, η²=0.48"
+Rumpfneigung nach vorn (max.) [°],14.57 ± 8.96,14.50 ± 6.11,42.36 ± 5.52,"ANOVA F(2,27)=52.27, p<0.001, η²=0.79"

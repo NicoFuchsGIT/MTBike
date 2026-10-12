@@ -1,0 +1,59 @@
+Trials ausgewertet: 30 / 30
+Validierung: v0 aus ∫a dt = 6.42 ± 0.66 m/s (23.1 km/h, Soll 20 km/h); 60 % der Trials innerhalb ±20 %
+
+== Mittlere Verzögerung [m/s²] ==
+  Vorne    n=10  MW=  5.01  SD= 0.41  CV=  8.2%  Shapiro p=0.531
+  Neutral  n=10  MW=  5.44  SD= 0.37  CV=  6.7%  Shapiro p=0.194
+  Hinten   n=10  MW=  5.10  SD= 0.34  CV=  6.6%  Shapiro p=0.010
+  Levene p=0.767 | ANOVA F=3.82 p=0.0345 | Kruskal-Wallis H=6.77 p=0.0339 | eta²=0.221
+    post-hoc Vorne-Neutral: Tukey p=0.0370, Cohen's d=-1.12
+    post-hoc Vorne-Hinten: Tukey p=0.8552, Cohen's d=-0.24
+    post-hoc Neutral-Hinten: Tukey p=0.1123, Cohen's d=0.99
+
+== Maximale Verzögerung [m/s²] ==
+  Vorne    n=10  MW=  8.86  SD= 0.82  CV=  9.2%  Shapiro p=0.305
+  Neutral  n=10  MW=  9.55  SD= 0.72  CV=  7.5%  Shapiro p=0.714
+  Hinten   n=10  MW=  9.84  SD= 1.33  CV= 13.5%  Shapiro p=0.400
+  Levene p=0.298 | ANOVA F=2.59 p=0.0935 | Kruskal-Wallis H=4.68 p=0.0964 | eta²=0.161
+
+== Bremsdauer [s] ==
+  Vorne    n=10  MW=  1.40  SD= 0.20  CV= 14.1%  Shapiro p=0.294
+  Neutral  n=10  MW=  1.21  SD= 0.10  CV=  8.0%  Shapiro p=0.354
+  Hinten   n=10  MW=  1.12  SD= 0.06  CV=  4.9%  Shapiro p=0.790
+  Levene p=0.025 | ANOVA F=11.72 p=0.0002 | Kruskal-Wallis H=16.11 p=0.0003 | eta²=0.465
+    post-hoc Vorne-Neutral: Tukey p=0.0104, Cohen's d=1.19
+    post-hoc Vorne-Hinten: Tukey p=0.0002, Cohen's d=1.92
+    post-hoc Neutral-Hinten: Tukey p=0.2649, Cohen's d=1.18
+
+== Zeit bis Maximum [s] ==
+  Vorne    n=10  MW=  0.64  SD= 0.24  CV= 37.2%  Shapiro p=0.582
+  Neutral  n=10  MW=  0.49  SD= 0.30  CV= 60.3%  Shapiro p=0.048
+  Hinten   n=10  MW=  0.60  SD= 0.12  CV= 19.2%  Shapiro p=0.550
+  Levene p=0.047 | ANOVA F=1.15 p=0.3307 | Kruskal-Wallis H=2.66 p=0.2651 | eta²=0.079
+
+== Anfangsgeschw. (aus ∫a dt) [m/s] ==
+  Vorne    n=10  MW=  6.94  SD= 0.48  CV=  6.9%  Shapiro p=0.449
+  Neutral  n=10  MW=  6.59  SD= 0.32  CV=  4.8%  Shapiro p=0.431
+  Hinten   n=10  MW=  5.72  SD= 0.43  CV=  7.6%  Shapiro p=0.811
+  Levene p=0.667 | ANOVA F=23.21 p=0.0000 | Kruskal-Wallis H=18.55 p=0.0001 | eta²=0.632
+    post-hoc Vorne-Neutral: Tukey p=0.1593, Cohen's d=0.87
+    post-hoc Vorne-Hinten: Tukey p=0.0000, Cohen's d=2.70
+    post-hoc Neutral-Hinten: Tukey p=0.0002, Cohen's d=2.30
+
+== Bremsweg (aus ∫∫a dt) [m] ==
+  Vorne    n=10  MW=  4.99  SD= 0.90  CV= 18.0%  Shapiro p=0.403
+  Neutral  n=10  MW=  4.01  SD= 0.40  CV=  9.9%  Shapiro p=0.543
+  Hinten   n=10  MW=  3.60  SD= 0.50  CV= 13.9%  Shapiro p=0.814
+  Levene p=0.193 | ANOVA F=12.55 p=0.0001 | Kruskal-Wallis H=15.83 p=0.0004 | eta²=0.482
+    post-hoc Vorne-Neutral: Tukey p=0.0053, Cohen's d=1.41
+    post-hoc Vorne-Hinten: Tukey p=0.0001, Cohen's d=1.91
+    post-hoc Neutral-Hinten: Tukey p=0.3337, Cohen's d=0.91
+
+== Rumpfneigung nach vorn (max.) [°] ==
+  Vorne    n=10  MW= 14.57  SD= 8.96  CV= 61.5%  Shapiro p=0.735
+  Neutral  n=10  MW= 14.50  SD= 6.11  CV= 42.1%  Shapiro p=0.344
+  Hinten   n=10  MW= 42.36  SD= 5.52  CV= 13.0%  Shapiro p=0.543
+  Levene p=0.235 | ANOVA F=52.27 p=0.0000 | Kruskal-Wallis H=19.36 p=0.0001 | eta²=0.795
+    post-hoc Vorne-Neutral: Tukey p=0.9997, Cohen's d=0.01
+    post-hoc Vorne-Hinten: Tukey p=0.0000, Cohen's d=-3.73
+    post-hoc Neutral-Hinten: Tukey p=0.0000, Cohen's d=-4.79
