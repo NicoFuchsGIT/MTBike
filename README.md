@@ -77,10 +77,22 @@ Sensitivitätsanalyse: Mit ā' = v₀ / Zeit bis Stillstand bleibt die Reihenfol
   - Die Geschwindigkeit wurde nicht kontrolliert, die Reihenfolge nicht randomisiert.
   - Die Gyro-Integration ist nur über wenige Sekunden driftarm.
 
+## Zusatzabbildungen (ergänzen Fig 2–4)
+`python analysis/extra_figures.py`. Fig 2–4 bleiben unverändert.
+
+| Datei | Inhalt | Lesehilfe |
+|---|---|---|
+| `Fig5_Raincloud_Schaetzung.png` | ā je Position als Dichte, Box und Einzelwerte; dazu die Differenz zu „vorn“ mit 95-%-Bootstrap-KI (10 000 Ziehungen) | neutral − vorn = +0,44 m/s² [+0,12; +0,76]. Das KI ist **nicht** für Mehrfachvergleiche korrigiert, entspricht also Tukey (p = 0,037) und nicht Mann-Whitney mit Bonferroni (p = 0,063). |
+| `Fig6_Heatmap_Trials.png` | alle 30 a_x(t)-Verläufe, nach Uhrzeit sortiert; Strich = Ende Bremsfenster, Raute = v_Rumpf = 0 | Der Einbruch bei hinten (≈ 0,3–0,5 s) ist in praktisch allen Trials sichtbar. Farbflecken nach dem Stopp sind Rumpfschwingungen, keine Bremsung. |
+| `Fig7_Phasenportraet.png` | Verzögerung über der Geschwindigkeit (v₀ → 0), Einzeltrials und Mittel in 1-km/h-Klassen (nur Klassen mit ≥ 5 Trials) | Die Wellen sind die Rumpfschwingung (≈ 3–4 Hz). Unter ≈ 3 km/h wird das Signal unruhig (Stillstand, Abstützen). |
+| `Fig8_gg_Diagramm.png` | Quer- gegen Längsbeschleunigung im Bremsfenster [g], mit Reifenhaftkreis (0,7–0,8 g) und Überschlaggrenze (0,55–0,65 g) | Die Trial-Mittel (ā) liegen knapp über bzw. in der Überschlaggrenze. Die Spitzen des Rumpfsignals reichen über beide Grenzen hinaus, sind also kein KSP-Wert. Die Querbeschleunigung ist ≈ 0, wie bei einer geraden Bremsung zu erwarten. |
+| `Fig9_Rumpf_Animation.gif` (+ Standbild) | Mittel je Position: Rumpfneigung und a_x, Zeitlupe 0,5× | **Die Ausgangshaltung ist schematisch** (vorn 40°, neutral 20°, hinten −10° zur Senkrechten). Gemessen ist nur die Neigungsänderung Δθ ab Bremsbeginn. Nur zur Veranschaulichung, nicht für Kennwerte verwenden. |
+
 ## Struktur
 - `analysis/io_phyphox.py`: robustes CSV-Einlesen (Komma/Tab, Dezimalpunkt/-komma)
 - `analysis/brake_pipeline.py`: Signalverarbeitung pro Trial
 - `analysis/run_analysis.py`: Batch, Statistik, Abbildungen
 - `analysis/diag_plot.py`: Kontrollplot aller Trials
+- `analysis/extra_figures.py`: Zusatzabbildungen Fig 5–9
 - `codex_legacy/`: alte Codex-Skripte (nicht verwenden, siehe PRD §3)
 - `files/`: Rohdaten phyphox

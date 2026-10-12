@@ -158,11 +158,13 @@ def analyze_at(folder, t, a_f, w_f, fs, ic):
     ks = st + (after[0] if after.size else len(v) - 1 - st)   # erster Nulldurchgang
     # Rumpf-Nickwinkel: Drehung um die Querachse (ey = ez x ex), + = nach vorn
     ey = np.cross(ez, ex)
+    a_y = a_h @ ey                         # Querbeschleunigung (für g-g-Diagramm)
+    a_y = a_y - (a_y[pre].mean() if pre.any() else 0.0)
     pitch = np.degrees(np.cumsum(w_w @ ey) / fs)
     pitch -= pitch[st]
     return dict(
         name=os.path.basename(folder), position=os.path.basename(folder).split()[0],
-        fs=fs, t=tt, a_x=a_c, a_v=a_v, t_rel=tt - tt[st],
+        fs=fs, t=tt, a_x=a_c, a_y=a_y, a_v=a_v, t_rel=tt - tt[st],
         t_start=tt[st], t_end=tt[en], t_peak=tt[ip], t_quiet=tt[-1],
         peak=-a_c[ip], mean=-a_c[win].mean(), dur=tt[en] - tt[st],
         dv=dv, v=v, v0=v[st], t_stop=tt[ks] - tt[st],
