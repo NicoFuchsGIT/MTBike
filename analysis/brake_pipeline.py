@@ -2,14 +2,15 @@
 
 Methode
 1. Acc und Gyro auf gemeinsames Raster, Butterworth-Tiefpass (zero-lag).
-2. Stillstand nach der Bremsung finden (|a|≈g, Gyro klein) -> Gravitationsvektor g_end
-   und Gyro-Offset (Bias) im Sensorsystem.
+2. Stillstand nach der Bremsung finden (ruhigstes 0,4-s-Fenster) -> Gravitationsvektor
+   g_end im Sensorsystem (kein Gyro-Bias-Abzug, siehe to_stop_frame).
 3. Orientierung per Gyro-Integration rückwärts ab Stillstand -> jede Probe ins
    'Stillstands-Weltsystem' drehen; dort ist die Vertikale bekannt.
 4. Lineare Beschleunigung = a_welt - g; horizontale Hauptrichtung (PCA) in den
    Sekunden vor dem Stillstand = Fahrtrichtung; Vorzeichen: Bremsen < 0.
-5. Bremsfenster: Beginn = letzter Nulldurchgang von a_x vor dem Verzögerungsplateau,
-   Ende = Stillstand. Validierung: Delta-v = Integral a_x dt ~ -5,56 m/s (20 km/h).
+5. Bremsfenster: a_x (2 Hz) < -1 m/s² um das stärkste 0,5-s-Plateau; Baseline aus der
+   Rollphase abgezogen. ā = Mittel im Fenster, Peak = Minimum im Fenster.
+   v0 = Integral a_x dt von Bremsbeginn bis Stillstand. Validierung: v0 ~ 5,56 m/s (20 km/h).
 """
 import glob
 import os
@@ -148,8 +149,13 @@ def analyze_at(folder, t, a_f, w_f, fs, ic):
     a_c = a_x - base
     win = slice(st, en + 1)
     ip = st + np.argmin(a_c[win])
-    dv = np.trapezoid(a_c[win], tt[win])
-    v = -dv + np.concatenate([[0], np.cumsum((a_c[st + 1:en + 1] + a_c[st:en]) / 2 / fs)])
+    dv = np.trapezoid(a_c[win], tt[win])   # Δv nur im Fenster (Konsistenz: ā·t_B)
+    # Geschwindigkeit rückwärts vom Stillstand integriert (v = 0 im Ruhefenster):
+    # schließt den Rückschwung des Rumpfs nach dem Fenster ein -> unverzerrtes v0
+    seg = (a_c[1:] + a_c[:-1]) / 2 / fs
+    v = np.concatenate([-np.cumsum(seg[::-1])[::-1], [0.0]])
+    after = np.flatnonzero(v[st:] <= 0)
+    ks = st + (after[0] if after.size else len(v) - 1 - st)   # erster Nulldurchgang
     # Rumpf-Nickwinkel: Drehung um die Querachse (ey = ez x ex), + = nach vorn
     ey = np.cross(ez, ex)
     pitch = np.degrees(np.cumsum(w_w @ ey) / fs)
@@ -159,7 +165,8 @@ def analyze_at(folder, t, a_f, w_f, fs, ic):
         fs=fs, t=tt, a_x=a_c, a_v=a_v, t_rel=tt - tt[st],
         t_start=tt[st], t_end=tt[en], t_peak=tt[ip], t_quiet=tt[-1],
         peak=-a_c[ip], mean=-a_c[win].mean(), dur=tt[en] - tt[st],
-        dv=dv, v0=-dv, dist=np.trapezoid(np.clip(v, 0, None), tt[win]),
+        dv=dv, v=v, v0=v[st], t_stop=tt[ks] - tt[st],
+        dist=np.trapezoid(v[st:ks + 1], tt[st:ks + 1]),
         t_to_peak=tt[ip] - tt[st], pitch=pitch, pitch_max=pitch[win].max(),
         pitch_min=pitch[win].min(), baseline=base,
     )

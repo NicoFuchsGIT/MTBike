@@ -30,11 +30,11 @@ INK, INK2, GRID = "#0b0b0b", "#52514e", "#e4e3df"
 
 METRICS = [
     ("mean", "Mittlere Verzögerung", "m/s²"),
-    ("peak", "Maximale Verzögerung", "m/s²"),
+    ("peak", "Spitzenverzögerung Rumpf", "m/s²"),
     ("dur", "Bremsdauer", "s"),
     ("t_to_peak", "Zeit bis Maximum", "s"),
-    ("v0", "Anfangsgeschw. (aus ∫a dt)", "m/s"),
-    ("dist", "Bremsweg (aus ∫∫a dt)", "m"),
+    ("v0", "Anfangsgeschw. (∫a dt bis Stillstand)", "m/s"),
+    ("dist", "Bremsweg (∫v dt)", "m"),
     ("pitch_max", "Rumpfneigung nach vorn (max.)", "°"),
 ]
 
@@ -96,7 +96,8 @@ def statistics(df):
             row["Test"] = f"ANOVA F(2,{len(allv) - 3})={F:.2f}, {fmt_p(p_anova)}, η²={eta2:.2f}"
             p_main = p_anova
         else:
-            row["Test"] = f"Kruskal-Wallis H={H:.2f}, {fmt_p(p_kw)}, η²={eta2:.2f}"
+            eta2_h = max(0.0, (H - 3 + 1) / (len(allv) - 3))
+            row["Test"] = f"Kruskal-Wallis H={H:.2f}, {fmt_p(p_kw)}, η²_H={eta2_h:.2f}"
             p_main = p_kw
         summ.append(row)
         lines.append(f"\n== {name} [{unit}] ==")
@@ -109,7 +110,12 @@ def statistics(df):
             tk = stats.tukey_hsd(*groups)
             for i in range(3):
                 for j in range(i + 1, 3):
-                    lines.append(f"    post-hoc {POS[i]}-{POS[j]}: Tukey p={tk.pvalue[i, j]:.4f}, "
+                    if normal:
+                        ph = f"Tukey p={tk.pvalue[i, j]:.4f}"
+                    else:   # nichtparametrisch: Mann-Whitney-U, Bonferroni (x3)
+                        pu = stats.mannwhitneyu(groups[i], groups[j]).pvalue
+                        ph = f"Mann-Whitney p_Bonf={min(1.0, 3 * pu):.4f}"
+                    lines.append(f"    post-hoc {POS[i]}-{POS[j]}: {ph}, "
                                  f"Cohen's d={cohen_d(groups[i], groups[j]):.2f}")
     return pd.DataFrame(summ), "\n".join(lines)
 
@@ -131,15 +137,13 @@ def fig_method(trials):
     ax[0].set_ylabel("a$_x$ KSP [m/s²]")
     ax[0].set_ylim(-11, 4)
     # Geschwindigkeit: rückwärts ab Stillstand integriert
-    a = r["a_x"][m]
-    v = np.cumsum(a[::-1])[::-1] / r["fs"] * -1
-    v = np.clip(v, 0, None)
-    ax[1].plot(t[m], v * 3.6, color=INK, lw=2)
+    ax[1].plot(t[m], r["v"][m] * 3.6, color=INK, lw=2)
     ax[1].axhline(V0 * 3.6, color=INK2, lw=1, ls=":")
     ax[1].text(-2.9, V0 * 3.6 + 1, "Soll 20 km/h", color=INK2, fontsize=12)
     ax[1].set_ylabel("v [km/h]")
     ax[1].set_xlabel("Zeit relativ zum Bremsbeginn [s]")
-    ax[1].set_ylim(0, 30)
+    ax[1].axhline(0, color=INK2, lw=0.8)
+    ax[1].set_ylim(-3, 30)
     fig.tight_layout()
     fig.savefig(os.path.join(OUT_FIG, "Fig2_Methode.png"))
     plt.close(fig)
@@ -175,7 +179,7 @@ def fig_curves(trials):
 
 def fig_compare(df):
     """Fig 4: Einzelwerte + MW ± SD je Position: Verzögerung (Ziel) und v0 (Störgröße)."""
-    keys = [("mean", "Mittlere Verzögerung [m/s²]"), ("peak", "Maximale Verzögerung [m/s²]"),
+    keys = [("mean", "Mittlere Verzögerung [m/s²]"), ("peak", "Spitzenverzögerung Rumpf [m/s²]"),
             ("v0", "Anfangsgeschwindigkeit [m/s]")]
     fig, axs = plt.subplots(1, 3, figsize=(14, 5.5))
     rng = np.random.default_rng(1)
@@ -211,7 +215,14 @@ def main():
     head = (f"Trials ausgewertet: {len(df)} / 30\n"
             f"Validierung: v0 aus ∫a dt = {df.v0.mean():.2f} ± {df.v0.std(ddof=1):.2f} m/s "
             f"({df.v0.mean() * 3.6:.1f} km/h, Soll {V0 * 3.6:.0f} km/h); "
-            f"{100 * dv_ok:.0f} % der Trials innerhalb ±20 %\n")
+            f"{100 * dv_ok:.0f} % der Trials innerhalb ±20 %\n"
+            f"Δv nur im Bremsfenster = {-df.delta_v.mean():.2f} m/s (ohne Rückschwung des Rumpfs)\n"
+            f"Korrelation mit v0: r(ā)={df.v0.corr(df['mean']):.2f}, r(Dauer)={df.v0.corr(df.dur):.2f}, "
+            f"r(Bremsweg)={df.v0.corr(df.dist):.2f}\n"
+            f"Plausibilität: physikalisch v0²/(2ā) = {(df.v0 ** 2 / (2 * df['mean'])).mean():.2f} m "
+            f"vs. Bremsweg {df.dist.mean():.2f} m\n"
+            f"Hinweis: Positionen geblockt aufgenommen (Vorne 14:51-15:05, Neutral 15:06-15:21, "
+            f"Hinten 15:23-15:33) -> Reihenfolge-/Übungseffekt nicht trennbar\n")
     with open(os.path.join(OUT_RES, "stats.txt"), "w", encoding="utf-8") as f:
         f.write(head + txt + "\n")
     print(head + txt)

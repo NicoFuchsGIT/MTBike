@@ -25,37 +25,57 @@ Diagnoseplot mit allen 30 Trials und Bremsfenster:
 5. **Bremsfenster:** Die Phase, in der a_x (2-Hz-Signal) unter −1 m/s² liegt, rund um das stärkste 0,5-s-Verzögerungsplateau. Davon wird eine Baseline aus der Rollphase abgezogen.
 6. **Kennwerte:**
    - mittlere und maximale Verzögerung, Bremsdauer
-   - v₀ = −∫a dt
-   - Bremsweg = ∫v dt
+   - v₀ = −∫a dt vom Bremsbeginn bis zum Stillstand (inkl. Rückschwung)
+   - Bremsweg = ∫v dt bis v = 0
    - Rumpf-Nickwinkel über das Gyro um die Querachse
 7. **Statistik:**
    - MW ± SD (n = 10), Shapiro-Wilk und Levene
    - ANOVA bzw. Kruskal-Wallis, je nach Normalverteilung
-   - Tukey-HSD als Post-hoc, Effektstärken η² und Cohen's d
+   - Post-hoc: Tukey-HSD nach ANOVA, Mann-Whitney mit Bonferroni nach Kruskal-Wallis
+   - Effektstärken η² bzw. η²_H und Cohen's d
 
 Alle **30/30 Trials** wurden automatisch erkannt. Die Bremsfenster wurden zusätzlich visuell geprüft.
 
 ## Ergebnisse (MW ± SD, n = 10 je Position)
 | Kennwert | Vorne | Neutral | Hinten | Test |
 |---|---|---|---|---|
-| **Mittlere Verzögerung [m/s²]** | 5,01 ± 0,41 | **5,44 ± 0,37** | 5,10 ± 0,34 | Kruskal-Wallis p = 0,034, η² = 0,22; Vorne–Neutral p = 0,037 (d = 1,1) |
-| Maximale Verzögerung [m/s²] | 8,86 ± 0,82 | 9,55 ± 0,72 | 9,84 ± 1,33 | ANOVA p = 0,094 (n.s.) |
+| **Mittlere Verzögerung ā [m/s²]** | 5,01 ± 0,41 | **5,44 ± 0,37** | 5,10 ± 0,34 | Kruskal-Wallis H = 6,77, p = 0,034, η²_H = 0,18 (ANOVA p = 0,035) |
+| Spitzenverzögerung Rumpf [m/s²] | 8,86 ± 0,82 | 9,55 ± 0,72 | 9,84 ± 1,33 | ANOVA p = 0,094 (n.s.) |
 | Bremsdauer [s] | 1,40 ± 0,20 | 1,21 ± 0,10 | 1,12 ± 0,06 | ANOVA p < 0,001 ⚠ v₀-abhängig |
-| Bremsweg [m] | 4,99 ± 0,90 | 4,01 ± 0,40 | 3,60 ± 0,50 | ANOVA p < 0,001 ⚠ v₀-abhängig |
-| Anfangsgeschw. v₀ [km/h] | 25,0 ± 1,7 | 23,7 ± 1,1 | 20,6 ± 1,6 | ANOVA p < 0,001 |
+| Bremsweg [m] | 4,48 ± 0,90 | 3,46 ± 0,48 | 3,65 ± 0,53 | ANOVA p = 0,004 ⚠ v₀-abhängig |
+| Anfangsgeschw. v₀ [km/h] | 23,5 ± 2,0 | 21,9 ± 1,5 | 20,4 ± 1,4 | ANOVA p = 0,001 |
 | Rumpfneigung nach vorn (max.) [°] | 15 ± 9 | 15 ± 6 | 42 ± 6 | ANOVA p < 0,001 |
 
+Post-hoc ā (Hinten nicht normalverteilt, Shapiro p = 0,010):
+- Vorne–Neutral: Mann-Whitney mit Bonferroni p = 0,063, Tukey p = 0,037, d = 1,1
+- die übrigen Paare n.s.
+
+Sensitivitätsanalyse: Mit ā' = v₀ / Zeit bis Stillstand bleibt die Reihenfolge gleich (Neutral 5,80 ± 0,44 > Vorne 5,15 ± 0,47 > Hinten 4,78 ± 0,86 m/s²; ANOVA p = 0,004).
+
+### Realismus-Check
+| Größe | gemessen | physikalisch erwartbar | Bewertung |
+|---|---|---|---|
+| ā (≈ 0,51–0,55 g) | 5,0–5,4 m/s² | Überschlaggrenze sitzend ≈ g·b/h ≈ 0,55–0,65 g (b ≈ 0,7 m KSP–Vorderradaufstand, h ≈ 1,1–1,2 m); Fahrrad-Vollbremsung typ. ≈ 0,5–0,6 g | ✅ realistisch, knapp unter der Überschlaggrenze |
+| Spitzenwert (0,8–1,2 g) | 7,8–12 m/s² | Das System Rad + Fahrer kann nicht stärker verzögern als μ·g (≈ 0,7–0,8 g) und die Überschlaggrenze erlauben | ⚠ **kein KSP-Wert**: Rumpfsegment, das von den Armen abgefangen wird und schwingt (≈ 3–4 Hz). Nur als Rumpfbelastung interpretieren. |
+| v₀ | 21,9 ± 2,1 km/h | Soll 20 km/h, E-MTB-Unterstützung bis 25 km/h | ✅ 83 % innerhalb ±20 % (Kriterium ≥ 80 % erfüllt) |
+| Konsistenz | ā·t_B = Δv im Fenster; v₀²/(2ā) = 3,65 m vs. Bremsweg 3,86 m | – | ✅ in sich stimmig (Rest: Anfangs- und Endrampe) |
+| Rollphase | v vor der Bremsung konstant (Schwankung ≈ ±0,3 m/s, Fig. 2) | konstant, leicht abnehmend | ✅ Schwerkraftkompensation funktioniert |
+| Rückschwung | v kurz ≈ −0,7 m/s nach dem Stopp (Fig. 2) | Rumpf schwingt nach dem Stopp zurück | ✅ plausibel; deshalb wird v₀ bis zum Stillstand integriert, nicht nur im Fenster (sonst +0,3 m/s) |
+| Rumpfneigung Hinten | 42 ± 6° | aus der Rücklage über die Senkrechte nach vorn | ⚠ plausibel, aber das Handy am Bauch kann zusätzlich mit dem Weichteilgewebe kippen |
+
 ### Interpretation / Diskussionspunkte
-- **Hauptbefund:** Die mittlere KSP-Verzögerung ist in der **neutralen** Position am größten, rund 8 % mehr als in der vorgebeugten Position. Die Unterschiede sind insgesamt klein (≈ 0,4 m/s²), aber signifikant, mit großem Effekt zwischen Vorne und Neutral.
-- **Vorne:** Die Verzögerung baut sich am langsamsten auf (Fig. 3). Ein plausibler Grund ist, dass der KSP weit vorne liegt. Dann wird das Hinterrad früher entlastet, und der Fahrer dosiert die Vorderradbremse vorsichtiger (Überschlaggrenze, vgl. Wilson & Schmidt).
-- **Hinten:** Der Rumpf kippt beim Bremsen stark nach vorn (≈ 42°). Die aufgebaute Körperenergie geht also in eine Rumpfrotation statt in einen stabilen Abstützimpuls. Die Bremskurve zeigt einen Einbruch bei ≈ 0,3 s (Fig. 3).
-- **Störgröße Anfangsgeschwindigkeit:** Statt der geplanten 20 km/h wurden real ≈ 21–25 km/h gefahren, und zwar systematisch je Position verschieden (die Vorne-Trials kamen zuerst). Bremsdauer und Bremsweg korrelieren stark mit v₀ (r = 0,78 bzw. 0,89). Sie sind deshalb **nicht** als Positionseffekt interpretierbar. Die mittlere Verzögerung korreliert dagegen nicht mit v₀ (r = 0,03) und ist der geeignete Hauptkennwert.
-- **Plausibilität:** v₀ aus der Integration (23,1 km/h im Mittel) passt zur Abregelgrenze des E-MTB (25 km/h). Außerdem stimmt ā mit v₀/t_B überein. Der Peak (~1 g) ist durch Körperoszillationen überhöht und weniger robust als ā.
+- **Hauptbefund:** In der **neutralen** Position ist die mittlere Verzögerung am größten (≈ +8 % gegenüber Vorne). Der Gesamttest ist signifikant (p = 0,034), der Paarvergleich Vorne–Neutral nur grenzwertig (p = 0,037–0,063, je nach Verfahren). Formulierung fürs Poster: „Tendenz, großer Effekt (d = 1,1)“, nicht „eindeutig“.
+- **Hypothese H1 nicht bestätigt:** Die Hinten-Position erreicht keine höhere ā. Nach hinten verlagert, steigt zwar die theoretische Überschlaggrenze. Da ā aber in allen Positionen bei ≈ 0,5 g und damit unter dieser Grenze liegt, begrenzt eher die Bremsdosierung des Fahrers als die Physik.
+- **Vorne:** Die Verzögerung baut sich am langsamsten auf (Fig. 3). Plausibel ist eine vorsichtigere Dosierung der Vorderradbremse, weil der KSP nahe an der Überschlaggrenze liegt (vgl. Wilson & Schmidt).
+- **Hinten:** Der Rumpf kippt beim Bremsen um ≈ 42° nach vorn. Bei ≈ 0,3 s bewegt er sich relativ zum Rad nach vorn, deshalb sinkt die gemessene Verzögerung kurz ab (Einbruch in Fig. 3). Danach fangen die Arme den Rumpf ab, und es folgt ein Spitzenwert. Über den gesamten Stopp gleicht sich das aus (gleicher Impuls).
+- **Störgrößen:**
+  - (1) v₀ war nicht konstant (20–24 km/h). Bremsdauer und Bremsweg hängen stark davon ab (r = 0,76 bzw. 0,89) und sind deshalb **nicht** als Positionseffekt interpretierbar. ā korreliert kaum mit v₀ (r = −0,18).
+  - (2) Die Positionen wurden **geblockt** aufgenommen (Vorne 14:51–15:05 → Neutral → Hinten 15:23–15:33). Übungs- und Ermüdungseffekte lassen sich daher nicht von der Position trennen. Das Vorne-v₀ ist am höchsten, weil diese Trials zuerst gefahren wurden.
 - **Limitationen:**
   - n = 1 Proband; die Trials sind Wiederholungen, keine unabhängige Stichprobe.
-  - Das Handy am Bauch misst den Rumpf/Becken-Bereich als KSP-Näherung.
-  - Die Fahrgeschwindigkeit wurde nicht kontrolliert.
-  - Die Gyro-Integration ist nur über kurze Zeit driftarm.
+  - Das Handy am Bauch misst den Rumpf und ist damit nur eine Näherung des KSP.
+  - Die Geschwindigkeit wurde nicht kontrolliert, die Reihenfolge nicht randomisiert.
+  - Die Gyro-Integration ist nur über wenige Sekunden driftarm.
 
 ## Struktur
 - `analysis/io_phyphox.py`: robustes CSV-Einlesen (Komma/Tab, Dezimalpunkt/-komma)
