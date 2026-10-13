@@ -96,5 +96,6 @@ Sensitivitätsanalyse: Mit ā' = v₀ / Zeit bis Stillstand bleibt die Reihenfol
 - `analysis/run_analysis.py`: Batch, Statistik, Abbildungen
 - `analysis/diag_plot.py`: Kontrollplot aller Trials
 - `analysis/extra_figures.py`: Zusatzabbildungen Fig 5–9
+- `poster/make_poster.py`: Poster (Vorlage STPAA, A3 hoch → Druck A1, IMRAD, 3 Abb. + 1 Tab.) als editierbare SVG `poster/Poster_MTB_Bremsen.svg`. Text = echter SVG-Text, Abbildungen = Vektorgruppen, Ebenen je Abschnitt, Vorlage (Logo/Fußzeile) als gesperrte Hintergrundebene. Zahlen kommen direkt aus der Auswertung. Vorschau: `poster/Vorschau_Poster.png`
 - `codex_legacy/`: alte Codex-Skripte (nicht verwenden, siehe PRD §3)
 - `files/`: Rohdaten phyphox
